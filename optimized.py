@@ -54,3 +54,17 @@ total_cost = sum(action.cost for action in best_portfolio)
 print(f"Meilleur investissement avec un profit de {best_benefit:.2f}€ après 2 ans pour un investissment de {total_cost:.2f}:")
 for action in best_portfolio:
     print(f"- {action.name} coûtant {action.cost:.2f}€ avec un bénéfice de {action.calculate_benefits():.2f}€")
+    
+# Créer un rapport au format CSV
+report_file_path = 'investment_report.csv'
+
+with open(report_file_path, 'w', newline='', encoding='utf-8') as report_file:
+    writer = csv.writer(report_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    writer.writerow(['Sienna bought:'])
+    for action in best_portfolio:
+        writer.writerow([action.name])
+    writer.writerow([])
+    writer.writerow([f'Total cost: {total_cost:.2f}€'])
+    writer.writerow([f'Total return: {best_benefit:.2f}€'])
+
+print(f"Le rapport a été enregistré sous le nom '{report_file_path}'.")
