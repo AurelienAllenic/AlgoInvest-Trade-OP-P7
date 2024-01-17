@@ -16,7 +16,6 @@ class Client:
         else:
             print(f"Impossible d'acheter l'action {action.name}. Vérifiez si vous avez suffisamment d'argent ou si l'action est déjà achetée.")
 
-    def evaluate_potential_investments(self, actions):
         best_profit = 0
         best_portfolio = None
 
@@ -51,9 +50,10 @@ def read_actions_from_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         reader = csv.DictReader(file)
         for row in reader:
-            name = row['Action']
-            cost = int(row['Coût'])
-            benefit_rate = float(row['Bénéfice'].strip('%')) / 100
+            name = row['name']
+            cost = float(row['price'])
+            profit = float(row['profit'])
+            benefit_rate = (profit / 100)
             actions.append(Action(name, cost, benefit_rate))
     return actions
 
@@ -61,21 +61,22 @@ def find_best_investment(actions, budget):
     best_profit = 0
     best_portfolio = None
 
-    # Explore toutes les combinaisons d'actions possibles
     for r in range(1, len(actions) + 1):
         for subset in itertools.combinations(actions, r):
             total_cost = sum(action.cost for action in subset)
-            total_benefit = sum(action.calculate_benefits() for action in subset)
 
-            if total_cost <= budget and total_benefit > best_profit:
-                best_profit = total_benefit
-                best_portfolio = subset
+            # Continue seulement si le coût total est dans le budget
+            if total_cost <= budget:
+                total_benefit = sum(action.calculate_benefits() for action in subset)
+
+                if total_benefit > best_profit:
+                    best_profit = total_benefit
+                    best_portfolio = subset
 
     return best_portfolio, best_profit
 
 
-
-actions = read_actions_from_file('actions.csv')
+actions = read_actions_from_file('sienna.csv')
 
 # Création d'un client
 client = Client("user123")
