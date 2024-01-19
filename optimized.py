@@ -1,5 +1,6 @@
 import csv
 
+
 class Action:
     def __init__(self, name, cost, profit_percentage):
         self.name = name
@@ -14,6 +15,7 @@ class Action:
     def calculate_return_on_cost(self):
         return self.real_return / self.cost if self.cost != 0 else 0
 
+
 def read_actions_from_file(file_path):
     actions = []
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -26,13 +28,14 @@ def read_actions_from_file(file_path):
                 actions.append(Action(name, cost, profit_percentage))
     return actions
 
+
 def select_actions(actions, budget):
-    sorted_actions = sorted(actions, key=lambda x: x.return_on_cost, reverse=True)
+    s_actions = sorted(actions, key=lambda x: x.return_on_cost, reverse=True)
     selected_actions = []
     total_cost = 0
     total_real_return = 0
 
-    for action in sorted_actions:
+    for action in s_actions:
         if total_cost + action.cost <= budget:
             selected_actions.append(action)
             total_cost += action.cost
@@ -40,21 +43,29 @@ def select_actions(actions, budget):
 
     return selected_actions, total_real_return, total_cost
 
+
 file_path = 'sienna2.csv'
 actions = read_actions_from_file(file_path)
 budget = 500
 best_portfolio, best_benefit, total_cost = select_actions(actions, budget)
 
 # Afficher les résultats
-print(f"Meilleur investissement avec un retour réel de {best_benefit:.2f}€ pour un investissement de {budget:.2f}€:")
+msg = (f"Meilleur investissement avec un retour réel de "
+       f"{best_benefit:.2f}€ pour un investissement de {total_cost:.2f}€:")
+print(msg)
+
+
 for action in best_portfolio:
-    print(f"- {action.name} coûtant {action.cost:.2f}€ avec un retour réel de {action.real_return:.2f}€")
+    print(f"- {action.name} coûtant {action.cost:.2f}€ avec un retour "
+          f"réel de {action.real_return:.2f}€")
+
 
 # Créer un rapport au format CSV
 report_file_path = 'investment_report.csv'
 
 with open(report_file_path, 'w', newline='', encoding='utf-8') as report_file:
-    writer = csv.writer(report_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    writer = csv.writer(report_file, delimiter=',', quotechar='"',
+                        quoting=csv.QUOTE_MINIMAL)
     if file_path == 'actions.csv':
         writer.writerow(['Actions bought:'])
     else:
